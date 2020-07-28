@@ -2,6 +2,7 @@ import os
 import math
 import subprocess, time
 import argparse
+import gzip
 from argparse import RawTextHelpFormatter
 from subprocess import call
 
@@ -65,7 +66,7 @@ def createDataSetFromDir(base_dir, bedFile):
         for file in files:
     	    if not file.endswith(".vcf"):
                 continue
-
+            
             link = root + '/' +  file
             f = open(link, "r")
             dbsnpf= open(bedFile,"r")
@@ -248,8 +249,14 @@ def createDataSetFromDir(base_dir, bedFile):
 def createDataSetFromList(base_list, bedFile):
     base_F = open(base_list,'r')
     for line in base_F.readlines():
+        print line
         link = line.strip()
-        f = open(link, "r")
+        if link.endswith(".vcf"):
+            f = open(link, "r")
+
+        elif link.endswith(".vcf.gz"):
+            f = gzip.open(link, "r")
+
         dbsnpf= open(bedFile,"r")
         file = link[link.rindex("/")+1:]
         depth = dict()
